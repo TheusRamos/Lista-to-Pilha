@@ -13,7 +13,7 @@ void imprime(Item *top){
     Item *atual = top->prox;
     int i = 0;
     while(atual!=NULL){
-        printf("value do item: %d\n", atual->value);
+        printf("Posicao do item: %d - valor do item: %d\n",atual , atual->value);
         i++;
         atual = atual->prox;
     }
@@ -44,31 +44,30 @@ void libera(Item *top){
 }
 
 void RetirarFim(Item *top){
-    Item *atual = top->prox;
-    Item *retirar;
-    while(atual != NULL){
-        
-        retirar = atual;
+
+    Item *atual = top;
+    Item *anterior = NULL;
+    while (atual->prox != NULL) {
+        anterior = atual;
         atual = atual->prox;
-       
     }
-    printf("Retirando item %d na posição de memoria %d\n", retirar->value, retirar);
-    retirar = NULL;
+    printf("Retirando item %d na posição de memória %p\n", atual->value, (void*)atual);
     free(atual);
-    
+
+    if (anterior != NULL) {
+        anterior->prox = NULL;
+    } else {
+        top->prox = NULL;
+    }
 }
+
 
 int main(){
     setlocale(LC_ALL ,"portuguese");
     Item top;
     top.prox = NULL;
-    printf("Tamanho do item: %d\n", sizeof(Item));
-    printf("Chegou aqui");
+
     InsereFim(&top, 125);
-    imprime(&top);
-
-
-    system("pause");
     InsereFim(&top, 189);
     imprime(&top);
 
@@ -76,9 +75,9 @@ int main(){
     RetirarFim(&top);
     system("pause");
     imprime(&top);
-    system("pause");
-    
-    system("pause");
+    RetirarFim(&top);
+    imprime(&top);
+
     libera(&top);
 
 
