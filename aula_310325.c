@@ -8,16 +8,19 @@ typedef struct ElementoLista
 {
     int value;
     struct ElementoLista *prox;
+    struct ElementoLista *ant;
 } Item;
 
 void imprime(Item *top)
 {
     Item *atual = top->prox;
+    Item *ant = NULL;
     int i = 0;
     while(atual!=NULL)
     {
-        printf("[%d] Posicao do item: %d - valor do item: %d\n",i+1,atual, atual->value);
+        printf("[%d] Posicao do item: %d - valor do item: %d - Valor anterior %d\n",i+1,atual, atual->value, ant);
         i++;
+        ant = atual;
         atual = atual->prox;
     }
     printf("\nTotal de itens na lista: %d\n", i);
@@ -30,11 +33,14 @@ void InsereFim(Item *top, int value)
     novo->value = value;
     printf("Item de value %d alocado no espaço de memória %d\n", novo->value, novo);
     Item *atual = top;
+    Item *ant = NULL;
     while(atual->prox!=NULL)
     {
+        ant = atual->prox;
         atual = atual->prox;
     }
     atual->prox = novo;
+
 }
 
 void libera(Item *top)
@@ -53,18 +59,18 @@ void libera(Item *top)
 void RetirarFim(Item *top)
 {
     Item *atual = top;
-    Item *anterior = NULL;
+    Item *ant = NULL;
     while (atual->prox != NULL)
     {
-        anterior = atual;
+        ant = atual;
         atual = atual->prox;
     }
     printf("Retirando item %d na posição de memória %p\n", atual->value, (void*)atual);
     free(atual);
 
-    if (anterior != NULL)
+    if (ant != NULL)
     {
-        anterior->prox = NULL;
+        ant->prox = NULL;
     }
     else
     {
@@ -76,6 +82,8 @@ void RetirarInicio(Item *top)
 {
     Item *atual = top->prox;
     Item *proximo = NULL;
+
+    printf("Endereço da memória, %p", (void*)atual);
     if(top->prox == NULL)
     {
         printf("Fila vazia..\n");
@@ -94,12 +102,31 @@ void RetirarInicio(Item *top)
     return;
 }
 
+void InsereInicio( Item *top, int valor)
+{
+    Item *novo = (Item *)malloc(sizeof(Item));
+
+    if (novo == NULL)
+    {
+        printf("Erro ao alocar memória!\n");
+        return;
+    }
+
+    novo->value = valor;
+    novo->prox = top->prox;
+    top->prox = novo;
+
+    printf("O valor %d foi adicionado ao início da fila!\n", valor);
+    return;
+}
+
 
 int main()
 {
     setlocale(LC_ALL,"portuguese");
     Item top;
     top.prox = NULL;
+    top.ant = NULL;
     int opc, valor;
     int fim = 0;
 
@@ -107,22 +134,25 @@ int main()
     {
         system("cls");
         printf("Bem vindo ao menu da Lista!\n\n");
-        printf("Escolha uma opção:\n\n[1]Adicionar item ao final da fila\n[2]Retirar item ao final da fila\n[3]Retirar item no inicio da fila\n[4]Mostrar fila\n[5]Sair do programa\n");
-        printf("\nDigite aqui: ");
+        printf("Escolha uma opção:\n\n[1]Adicionar item ao final da fila\n[2]Retirar item ao final da fila\n[3]Adicionar item no inicio da fila\n[4]Retirar item no inicio da fila\n[5]Mostrar fila\n[6]Sair");
+        printf("\n\nDigite aqui: ");
         scanf("%d", &opc);
 
         switch (opc)
         {
         case 1:
             system("cls");
-            printf("MENU PARA ADIÇÃO DE ITEM AO FIM DA FILA...\n");
+            printf("MENU PARA ADIÇÃO DE ITEM AO FIM DA FILA...\n\n");
             printf("Digite o valor que deseja adicionar: ");
             scanf("%d", &valor);
             InsereFim(&top, valor);
+            printf("Segue nova fila:\n");
+            imprime(&top);
             system("pause");
             break;
         case 2:
             system("cls");
+
             printf("Retirando item ao fim da fila...");
             RetirarFim(&top);
             system("pause");
@@ -132,6 +162,17 @@ int main()
             break;
         case 3:
             system("cls");
+            printf("MENU PARA ADIÇÃO DE ITEM AO INICIO DA FILA...\n\n");
+            printf("Digite o valor que deseja inserir: ");
+            scanf("%d", &valor);
+            InsereInicio(&top, valor);
+            printf("\nSegue nova fila:\n");
+            imprime(&top);
+            system("pause");
+            break;
+        case 4:
+            system("cls");
+
             printf("Retirando item no incio da fila...");
             RetirarInicio(&top);
             system("pause");
@@ -139,17 +180,21 @@ int main()
             imprime(&top);
             system("pause");
             break;
-        case 4:
-            printf("Esses são os itens da fila:\n\n");
+        case 5:
+            printf("SEGUE OS ITENS EM FILA:\n\n");
             imprime(&top);
             system("pause");
             break;
-        case 5:
+        case 6:
             system("cls");
             printf("Saindo...");
             fim++;
+            break;
+
         default:
             printf("Alternativa inválida, digite novamente!\n");
+            fflush(stdin);
+            system("Pause");
             break;
         }
     }
