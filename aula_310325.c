@@ -25,7 +25,18 @@ void imprime(Item *top)
     }
     printf("\nTotal de itens na lista: %d\n", i);
 }
-
+void libera(Item *top)
+{
+    Item *atual = top->prox;
+    Item *liberado;
+    while(atual->prox != NULL)
+    {
+        liberado = atual;
+        atual = atual->prox;
+        printf("Liberando item de value %d na posição de memória: %d\n", liberado->value, liberado);
+        free(liberado);
+    }
+}
 void InsereFim(Item *top, int value)
 {
     Item *novo = (Item*)malloc(sizeof(Item));
@@ -42,20 +53,23 @@ void InsereFim(Item *top, int value)
     atual->prox = novo;
 
 }
-
-void libera(Item *top)
+void InsereInicio( Item *top, int valor)
 {
-    Item *atual = top->prox;
-    Item *liberado;
-    while(atual->prox != NULL)
-    {
-        liberado = atual;
-        atual = atual->prox;
-        printf("Liberando item de value %d na posição de memória: %d\n", liberado->value, liberado);
-        free(liberado);
-    }
-}
+    Item *novo = (Item *)malloc(sizeof(Item));
 
+    if (novo == NULL)
+    {
+        printf("Erro ao alocar memória!\n");
+        return;
+    }
+
+    novo->value = valor;
+    novo->prox = top->prox;
+    top->prox = novo;
+
+    printf("O valor %d foi adicionado ao início da fila!\n", valor);
+    return;
+}
 void RetirarFim(Item *top)
 {
     Item *atual = top;
@@ -77,7 +91,6 @@ void RetirarFim(Item *top)
         top->prox = NULL;
     }
 }
-
 void RetirarInicio(Item *top)
 {
     Item *atual = top->prox;
@@ -99,24 +112,6 @@ void RetirarInicio(Item *top)
     {
         top->prox = NULL;
     }
-    return;
-}
-
-void InsereInicio( Item *top, int valor)
-{
-    Item *novo = (Item *)malloc(sizeof(Item));
-
-    if (novo == NULL)
-    {
-        printf("Erro ao alocar memória!\n");
-        return;
-    }
-
-    novo->value = valor;
-    novo->prox = top->prox;
-    top->prox = novo;
-
-    printf("O valor %d foi adicionado ao início da fila!\n", valor);
     return;
 }
 
